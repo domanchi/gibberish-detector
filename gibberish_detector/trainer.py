@@ -1,9 +1,8 @@
 import math
 import string
-from typing import Generator
-from typing import Tuple
 
 from .types import Model
+from .util import NGramIterator
 
 
 def train(filename: str, charset: str = string.ascii_letters) -> Model:
@@ -14,7 +13,13 @@ def train(filename: str, charset: str = string.ascii_letters) -> Model:
 
     :returns: dictionary, so that it's easier to work with the raw model in the code.
          The caller will be responsible for handling appropriate serialization.
+    :raises: IOError
     """
+    with open(filename) as f:
+        return train_on_content(f.read(), charset)
+
+
+def train_on_content(content: str, charset: str) -> Model:
     # TODO: make option for case insensitivity.
 
     # Assume that we have seen 10 of each character pair. This acts as a kind of prior /
@@ -26,10 +31,9 @@ def train(filename: str, charset: str = string.ascii_letters) -> Model:
     }
 
     iterator = NGramIterator(2, charset)
-    with open(filename) as f:
-        for line in f.readlines():
-            for a, b in iterator.get(line):
-                counts[a][b] += 1
+    for line in content.splitlines():
+        for a, b in iterator.get(line):
+            counts[a][b] += 1
 
     # Normalize the counts, so that they become log probabilities.
     # This helps avoid numeric underflow issues with long texts.
@@ -43,12 +47,8 @@ def train(filename: str, charset: str = string.ascii_letters) -> Model:
     return counts
 
 
-class NGramIterator:
-    def __init__(self, size: int, charset: str = string.ascii_letters) -> None:
-        self.charset = set(charset)
-        self.size = size
-
-    def get(self, text: str) -> Generator[Tuple, None, None]:
-        filtered = [c for c in text if c in self.charset]
-        for start in range(0, len(filtered) - self.size + 1):
-            yield tuple(filtered[start:start + self.size])
+if __name__ == '__main__':
+    # Sample execution
+    import json
+    from gibberish_detector.util import get_path_to
+    print(json.dumps(train(get_path_to('examples/big.txt'), indent=2)))
