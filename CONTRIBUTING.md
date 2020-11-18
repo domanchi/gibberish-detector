@@ -10,3 +10,10 @@ $ source venv/bin/activate
 ```bash
 $ make test
 ```
+
+## Deploying Changes
+
+```bash
+$ scripts/upload-to-pypi test
+$ scripts/upload-to-pypi
+```

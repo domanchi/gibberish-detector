@@ -1,0 +1,104 @@
+#!/bin/bash
+PACKAGE_NAME='gibberish-detector'
+
+function usage() {
+    echo "Usage: upload-to-pypi [test|main]"
+    echo "Specify the pypi instance you want to upload to."
+    echo "  - test:   uploads to test.pypi.org"
+    echo "  - main:   uploads to pypi.org"
+}
+
+function main() {
+    local mode="$1"
+    if [[ -z "$mode" ]]; then
+        usage
+        return 0
+    fi
+
+    if [[ "$mode" != "main" ]] && [[ "$mode" != "test" ]]; then
+        usage
+        return 1
+    fi
+
+    # install dependencies
+    pip install setuptools wheel twine
+
+    # create distribution files
+    # sdist == source
+    # bdist == binary distributions through wheels (for faster installs)
+    python setup.py sdist bdist_wheel
+
+    gitTagVersion "$mode"
+    uploadToPyPI "$mode"
+    testUpload "$mode"
+    if [[ $? == 0 ]]; then
+        echo "Success!"
+        rm -r build/ dist/
+    fi
+}
+
+function gitTagVersion() {
+    # Usage: gitTagVersion <mode>
+    # This tags the latest upload with the latest version
+    local mode="$1"
+
+    # First, install it locally, so we can get the version easily.
+    pip install -e .
+    local version=`$PACKAGE_NAME --version`
+
+    local extraArgs=""
+    if [[ "$mode" == "test" ]]; then
+        extraArgs="--index-url https://test.pypi.org/simple/"
+    fi
+
+    # Check pip for existing version
+    local buffer=$((pip install $extraArgs $PACKAGE_NAME==no_version_found) 2>&1)
+    buffer=`echo "$buffer" | grep "$version"`
+    if [[ "$?" == 0 ]]; then
+        echo "error: Version already exists in PyPI."
+        return 1
+    fi
+
+    # Ignore output when searching for version. We only care about the return code.
+    buffer=`git tag --list | grep "^v$version$"`
+
+    if [[ "$?" != 0 ]]; then
+        git tag "v$version" && git push origin --tags
+    fi
+}
+
+function uploadToPyPI() {
+    # Usage: uploadToPyPI <mode>
+    local mode="$1"
+    if [[ "$mode" == "main" ]]; then
+        twine upload dist/*
+    else
+        twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+    fi
+}
+
+function testUpload() {
+    # Usage: testUpload <mode>
+    local mode="$1"
+
+    installFromPyPI "$mode"
+    $PACKAGE_NAME --version
+    if [[ $? != 0 ]]; then
+        echo "Failed installation!"
+        return 1
+    fi
+
+    return 0
+}
+
+function installFromPyPI() {
+    # Usage: installFromPyPI <mode>
+    local mode="$1"
+    if [[ "$mode" == "main" ]]; then
+        pip install "$PACKAGE_NAME"
+    else
+        pip install --index-url https://test.pypi.org/simple/ "$PACKAGE_NAME"
+    fi
+}
+
+main "$@"
