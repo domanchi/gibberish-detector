@@ -1,0 +1,5 @@
+coverage
+mypy
+pre-commit
+pytest
+tox
