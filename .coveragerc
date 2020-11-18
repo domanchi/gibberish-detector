@@ -1,0 +1,25 @@
+[run]
+branch = True
+source = .
+omit =
+    .tox/*
+    setup.py
+    gibberish_detector/__main__.py
+
+[report]
+skip_covered = True
+exclude_lines =
+    # Don't complain if non-runnable code isn't run:
+    ^if __name__ == ['"]__main__['"]:$
+
+    # Don't complain if tests don't hit defensive assertion code:
+    ^\s*raise AssertionError\b
+    ^\s*raise NotImplementedError\b
+    ^\s*return NotImplemented\b
+    ^\s*raise$
+
+    # Need to redefine this, as per documentation
+    pragma: no cover
+
+    # Don't complain for skipped tests
+    ^@pytest.mark.skip
