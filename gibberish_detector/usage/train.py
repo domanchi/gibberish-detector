@@ -20,3 +20,10 @@ def add_arguments(parent: argparse._SubParsersAction) -> None:
         help='Specifies the corpus files to be used for training the model.',
         type=valid_file,
     )
+
+    parser.add_argument(
+        '--amend',
+        nargs=1,
+        help='If specified, will improve existing model with new results.',
+        type=valid_file,
+    )

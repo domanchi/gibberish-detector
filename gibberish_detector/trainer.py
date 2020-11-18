@@ -1,8 +1,6 @@
-import math
 import string
 
-from .types import Model
-from .util import NGramIterator
+from .model import Model
 
 
 def train(filename: str, charset: str = string.ascii_letters) -> Model:
@@ -21,30 +19,11 @@ def train(filename: str, charset: str = string.ascii_letters) -> Model:
 
 def train_on_content(content: str, charset: str) -> Model:
     # TODO: make option for case insensitivity.
-
-    # Assume that we have seen 10 of each character pair. This acts as a kind of prior /
-    # smoothing factor. This way, if we see a character transition during live runs that
-    # we've never observed in the past, we won't assume the entire string has 0 probability.
-    counts = {
-        key: {key: 10.0 for key in charset}
-        for key in charset
-    }
-
-    iterator = NGramIterator(2, charset)
+    model = Model(charset)
     for line in content.splitlines():
-        for a, b in iterator.get(line):
-            counts[a][b] += 1
+        model.train(line)
 
-    # Normalize the counts, so that they become log probabilities.
-    # This helps avoid numeric underflow issues with long texts.
-    # Justification:
-    # http://squarecog.wordpress.com/2009/01/10/dealing-with-underflow-in-joint-probability-calculations/
-    for row in counts.values():
-        total = sum(row.values())
-        for index, value in row.items():
-            row[index] = - math.log(float(value) / total)
-
-    return counts
+    return model
 
 
 if __name__ == '__main__':

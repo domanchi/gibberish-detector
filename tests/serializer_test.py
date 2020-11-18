@@ -1,6 +1,7 @@
 import pytest
 
 from gibberish_detector import serializer
+from gibberish_detector.model import Model
 
 
 @pytest.mark.parametrize(
@@ -28,4 +29,5 @@ from gibberish_detector import serializer
     ),
 )
 def test_success(model):
+    model = Model.from_dict(model)
     assert model == serializer.deserialize(serializer.serialize(model))

@@ -13,8 +13,8 @@ def test_basic():
 
         model = train(f.name, charset=get_charset_from_payload(payload))
 
-    assert model['a']['b'] < model['b']['a']
-    assert model['c']['a'] < model['a']['b']
+    assert model['ab'] < model['ba']
+    assert model['ca'] < model['ab']
 
 
 def get_charset_from_payload(payload: str) -> str:

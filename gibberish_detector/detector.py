@@ -1,12 +1,12 @@
 import string
 
-from .types import Model
+from .model import Model
 from .util import NGramIterator
 
 
 class Detector:
     def __init__(self, model: Model, threshold: float) -> None:
-        self.model = model
+        self.model = model.normalize()
         self.limit = threshold
 
         # TODO: allow specification of charset

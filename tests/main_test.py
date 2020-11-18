@@ -30,9 +30,11 @@ def test_basic(basic_model_filename, text, is_gibberish):
     assert (output.read().strip() == 'True') is is_gibberish
 
 
-@pytest.mark.skip(reason='TODO')
-def test_train_on_multiple_files():
-    pass
+def test_train_on_multiple_files(basic_model_filename):
+    # This is a smoke test
+    assert main([
+        'train', 'examples/quote.txt', '--amend', basic_model_filename,
+    ]) == 0
 
 
 def test_interactive(basic_model_filename):
