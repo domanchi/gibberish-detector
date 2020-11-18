@@ -51,4 +51,4 @@ if __name__ == '__main__':
     # Sample execution
     import json
     from gibberish_detector.util import get_path_to
-    print(json.dumps(train(get_path_to('examples/big.txt'), indent=2)))
+    print(json.dumps(train(get_path_to('examples/big.txt')), indent=2))

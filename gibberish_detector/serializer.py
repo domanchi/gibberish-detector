@@ -4,6 +4,7 @@ We only assert that:
 
 >>> payload == deserialize(serialize(payload))
 """
+from .exceptions import ParsingError
 from .types import Model
 
 
@@ -15,5 +16,12 @@ def serialize(model: Model) -> str:
 
 
 def deserialize(payload: str) -> Model:
+    """
+    :raises: ParsingError
+    """
     import json
-    return json.loads(payload)
+
+    try:
+        return json.loads(payload)
+    except json.decoder.JSONDecodeError:
+        raise ParsingError
