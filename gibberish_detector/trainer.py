@@ -1,11 +1,12 @@
 import math
 import string
-from typing import Dict
 from typing import Generator
 from typing import Tuple
 
+from .types import Model
 
-def train(filename: str, charset: str = string.ascii_letters) -> Dict[str, Dict[str, float]]:
+
+def train(filename: str, charset: str = string.ascii_letters) -> Model:
     """
     Trains a normalized probability distribution table of ngrams of length 2, from the file
     content specified. Returned floats indicate the relative chance that a value is gibberish
