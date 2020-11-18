@@ -1,7 +1,19 @@
 import string
 
+from . import serializer
 from .model import Model
 from .util import NGramIterator
+
+
+def create_from_model(filename: str, limit: float = 4.0):
+    """
+    :raises: IOError
+    :raises: ParsingError
+    """
+    with open(filename) as f:
+        model = serializer.deserialize(f.read())
+
+    return Detector(model, limit)
 
 
 class Detector:

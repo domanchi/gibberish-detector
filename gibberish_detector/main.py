@@ -3,9 +3,9 @@ import sys
 from typing import List
 from typing import Optional
 
+from . import detector
 from . import serializer
 from . import trainer
-from .detector import Detector
 from .exceptions import ParsingError
 from .usage import parse_args
 
@@ -37,8 +37,7 @@ def _handle_train_action(args: argparse.Namespace) -> int:
 
 def _handle_detect_action(args: argparse.Namespace) -> int:
     try:
-        with open(args.model) as f:
-            model = serializer.deserialize(f.read())
+        Detector = detector.create_from_model(args.model, args.limit)
     except IOError:     # pragma: no cover
         print(
             'error: There was an issue opening your model.',
@@ -52,9 +51,8 @@ def _handle_detect_action(args: argparse.Namespace) -> int:
         )
         return 1
 
-    detector = Detector(model, args.limit)
     if not args.interactive:
-        print(detector.is_gibberish(args.string))
+        print(Detector.is_gibberish(args.string))
         return 0
 
     print('Entering interactive mode. Press ctrl+d to quit.')
@@ -63,8 +61,8 @@ def _handle_detect_action(args: argparse.Namespace) -> int:
             text = input('Input text: ')
             print(
                 '{:<5} ({})'.format(
-                    'True' if detector.is_gibberish(text) else 'False',
-                    round(detector.calculate_probability_of_being_gibberish(text), 3),
+                    'True' if Detector.is_gibberish(text) else 'False',
+                    round(Detector.calculate_probability_of_being_gibberish(text), 3),
                 ),
             )
         except EOFError:
