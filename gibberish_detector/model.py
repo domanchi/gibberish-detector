@@ -1,5 +1,6 @@
 import math
 from typing import Any
+from typing import cast
 from typing import Dict
 from typing import Optional
 from typing import Union
@@ -32,8 +33,11 @@ class Model:
         """
         :param data: the `json()` representation for this model.
         """
-        model = cls(data['charset'], data.get('ngram_size', 2))
-        model.data = data['counts']
+        model = cls(
+            cast(str, data['charset']),
+            int(cast(str, data.get('ngram_size', 2))),
+        )
+        model.data = cast(Dict[str, Dict[str, float]], data['counts'])
 
         return model
 
@@ -57,7 +61,7 @@ class Model:
         # reset cache
         self._normalized_model = None
 
-    def json(self) -> Dict[str, Union[str, int, Dict[str, float]]]:
+    def json(self) -> Dict[str, Union[str, int, Dict[str, Dict[str, float]]]]:
         """
         This outputs a reversible representation for the model.
         Use this function for serialization, but the `normalize` function for detection.
