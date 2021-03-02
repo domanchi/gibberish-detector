@@ -15,5 +15,5 @@ $ make test
 
 ```bash
 $ scripts/upload-to-pypi test
-$ scripts/upload-to-pypi
+$ scripts/upload-to-pypi main
 ```

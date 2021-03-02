@@ -5,29 +5,20 @@ from gibberish_detector.model import Model
 
 
 @pytest.mark.parametrize(
-    'model',
+    'line',
     (
         # Basic case
-        {
-            'a': {'a': 2.0},
-        },
+        'aaaaaaaaaa',
 
         # Nested with multiple values
-        {
-            'a': {'a': 1.1, 'b': 1.2},
-        },
+        'aaaaaaaaab',
 
         # Multiple top level
-        {
-            'a': {'a': 2.0},
-            'b': {'b': 2.0},
-        },
-        {
-            'a': {'a': 1.1, 'b': 1.2},
-            'b': {'a': 0.9, 'b': 1.4},
-        },
+        'aaaaabbbbb',
+        'aabbaabbaa',
     ),
 )
-def test_success(model):
-    model = Model.from_dict(model)
+def test_success(line):
+    model = Model('ab')
+    model.train(line)
     assert model == serializer.deserialize(serializer.serialize(model))

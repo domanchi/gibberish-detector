@@ -30,11 +30,33 @@ def test_basic(basic_model_filename, text, is_gibberish):
     assert (output.read().strip() == 'True') is is_gibberish
 
 
-def test_train_on_multiple_files(basic_model_filename):
+def test_update_model(basic_model_filename):
     # This is a smoke test
-    assert main([
-        'train', 'examples/quote.txt', '--amend', basic_model_filename,
-    ]) == 0
+    with tempfile.NamedTemporaryFile('w+') as f:
+        with redirect_stdout(f):
+            assert main([
+                'train', 'examples/quote.txt', '--amend', basic_model_filename,
+            ]) == 0
+
+        f.seek(0)
+        with open(basic_model_filename) as g:
+            assert f.read() != g.read()
+
+
+def test_train_multiple_models():
+    with tempfile.NamedTemporaryFile('w+') as f, tempfile.NamedTemporaryFile('w+') as g:
+        with redirect_stdout(f):
+            assert main(
+                'train examples/big.txt examples/quote.txt'.split(),
+            ) == 0
+
+        with redirect_stdout(g):
+            assert main('train examples/quote.txt'.split()) == 0
+
+        f.seek(0)
+        g.seek(0)
+
+        assert f.read() != g.read()
 
 
 def test_interactive(basic_model_filename):
