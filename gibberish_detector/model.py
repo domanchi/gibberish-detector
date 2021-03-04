@@ -11,7 +11,7 @@ from .util import NGramIterator
 # Assume that we have seen 10 of each character pair. This acts as a kind of prior /
 # smoothing factor. This way, if we see a character transition during live runs that
 # we've never observed in the past, we won't assume the entire string has 0 probability.
-SMOOTHING_FACTOR = 10.0
+SMOOTHING_FACTOR = 10
 
 
 class Model:
@@ -50,13 +50,26 @@ class Model:
 
     def update(self, other: 'Model') -> None:
         """
+        This carries over the other model's charset, and unions it with the current one.
+        This is because learning more about the "world" is not a bad thing: a more intelligent
+        model is always better.
+
         :param other: unnormalized model
         """
         for i, row in other.data.items():
+            if i not in self.data:
+                self.data[i] = row
+                continue
+
             for j, value in row.items():
-                # NOTE: We subtract the SMOOTHING_FACTOR here, since at this point,
-                # we're adding it twice (since it initializes the model).
-                self.data[i][j] += value - SMOOTHING_FACTOR
+                if j in self.data[i]:
+                    # NOTE: We subtract the SMOOTHING_FACTOR here, since at this point,
+                    # we're adding it twice (since it initializes the model).
+                    self.data[i][j] += value - SMOOTHING_FACTOR
+                else:
+                    # However, if it's the first time we're seeing this pair, we keep
+                    # the SMOOTHING_FACTOR.
+                    self.data[i][j] = value
 
         # reset cache
         self._normalized_model = None
