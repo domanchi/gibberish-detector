@@ -3,8 +3,6 @@ import os
 from setuptools import find_packages
 from setuptools import setup
 
-from gibberish_detector.__version__ import VERSION
-
 
 def local_file(path: str) -> str:
     return os.path.relpath(
@@ -17,6 +15,11 @@ def local_file(path: str) -> str:
 
 with open(local_file('README.md')) as f:
     long_description = f.read()
+
+
+with open(local_file('gibberish_detector/__version__.py')) as f:
+    VERSION = ''    # make linters happy
+    exec(f.read())
 
 
 setup(
