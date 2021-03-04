@@ -58,3 +58,5 @@ class TestUpdate:
         assert modelA.data[seedA[0]][
             seedA[1]
         ] == modelA.data[seedB[0]][seedB[1]]
+
+        assert set(modelA.charset) == set(seedA) | set(seedB)

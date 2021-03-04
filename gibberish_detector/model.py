@@ -72,6 +72,7 @@ class Model:
                     self.data[i][j] = value
 
         # reset cache
+        self.charset = ''.join(set(self.charset) | set(other.charset))
         self._normalized_model = None
 
     def json(self) -> Dict[str, Union[str, int, Dict[str, Dict[str, int]]]]:
