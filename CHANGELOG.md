@@ -22,6 +22,13 @@ If you love `gibberish-detector`, please star our project on GitHub to show your
 [@xxxx]: https://github.com/xxxx
 -->
 
+### v0.1.1
+##### March 4rd, 2021
+
+#### :bug: Bugfixes
+
+- `Model.update` now *actually* carries over charset
+
 ### v0.1.0
 ##### March 3rd, 2021
 
