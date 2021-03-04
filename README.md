@@ -1,3 +1,5 @@
+[![PyPI version](https://badge.fury.io/py/gibberish-detector.svg)](https://badge.fury.io/py/gibberish-detector)
+
 # Gibberish Detector
 
 This is based off https://github.com/rrenaud/Gibberish-Detector, and adapted so that it is a

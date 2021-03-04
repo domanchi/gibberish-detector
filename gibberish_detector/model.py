@@ -29,7 +29,7 @@ class Model:
         self._normalized_model: Optional[Dict[str, Dict[str, float]]] = None
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Union[str, int, Dict[str, float]]]) -> 'Model':
+    def from_dict(cls, data: Dict[str, Union[str, int, Dict[str, int]]]) -> 'Model':
         """
         :param data: the `json()` representation for this model.
         """
@@ -37,7 +37,7 @@ class Model:
             cast(str, data['charset']),
             int(cast(str, data.get('ngram_size', 2))),
         )
-        model.data = cast(Dict[str, Dict[str, float]], data['counts'])
+        model.data = cast(Dict[str, Dict[str, int]], data['counts'])
 
         return model
 
@@ -74,7 +74,7 @@ class Model:
         # reset cache
         self._normalized_model = None
 
-    def json(self) -> Dict[str, Union[str, int, Dict[str, Dict[str, float]]]]:
+    def json(self) -> Dict[str, Union[str, int, Dict[str, Dict[str, int]]]]:
         """
         This outputs a reversible representation for the model.
         Use this function for serialization, but the `normalize` function for detection.

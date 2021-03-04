@@ -3,7 +3,7 @@ from typing import Generator
 from typing import Tuple
 
 
-def get_path_to(path: str) -> str:
+def get_path_to(path: str) -> str:  # pragma: no cover
     return os.path.abspath(
         os.path.join(
             os.path.dirname(__file__),
