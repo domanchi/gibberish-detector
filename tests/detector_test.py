@@ -15,6 +15,12 @@ def test_calculate_probability_of_being_gibberish(model):
     )
 
 
+def test_handles_values_outside_of_character_map_gracefully(model):
+    detector = Detector(model, 4)
+
+    assert not detector.is_gibberish('Quick')
+
+
 @pytest.fixture
 def model():
     return trainer.train_on_content(

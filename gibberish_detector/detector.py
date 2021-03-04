@@ -1,5 +1,3 @@
-import string
-
 from . import serializer
 from .model import Model
 from .util import NGramIterator
@@ -22,7 +20,7 @@ class Detector:
         self.limit = threshold
 
         # TODO: allow specification of charset
-        self.iterator = NGramIterator(2, charset=string.ascii_letters)
+        self.iterator = NGramIterator(2, charset=model.charset)
 
     def is_gibberish(self, payload: str) -> bool:
         return self.calculate_probability_of_being_gibberish(payload) > self.limit
