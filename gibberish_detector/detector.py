@@ -28,4 +28,7 @@ class Detector:
     def calculate_probability_of_being_gibberish(self, payload: str) -> float:
         """The higher the number, the more likely to be gibberish."""
         ngrams = list(self.iterator.get(payload))
-        return sum([self.model[a][b] for a, b in ngrams]) / len(ngrams)
+        try:
+            return sum([self.model[a][b] for a, b in ngrams]) / len(ngrams)
+        except ZeroDivisionError:
+            return 0.0
