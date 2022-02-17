@@ -18,7 +18,7 @@ True
 **Training Large Corpuses**:
 
 ```bash
-$ gibberish-detector train $(ls examples) > generic.model
+$ gibberish-detector train $(ls examples/*) > generic.model
 ```
 
 **Interactive Detection**:
